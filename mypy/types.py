@@ -197,13 +197,11 @@ class UnboundType(Type):
                  args: List[Type] = None,
                  line: int = -1,
                  column: int = -1,
-                 optional: bool = False,
                  empty_tuple_index: bool = False) -> None:
         if not args:
             args = []
         self.name = name
         self.args = args
-        self.optional = optional
         self.empty_tuple_index = empty_tuple_index
         super().__init__(line, column)
 

@@ -123,11 +123,6 @@ class TypeAnalyser(SyntheticTypeVisitor[Type]):
         self.allow_unnormalized = allow_unnormalized
 
     def visit_unbound_type(self, t: UnboundType) -> Type:
-        if t.optional:
-            t.optional = False
-            # We don't need to worry about double-wrapping Optionals or
-            # wrapping Anys: Union simplification will take care of that.
-            return make_optional_type(self.visit_unbound_type(t))
         sym = self.lookup(t.name, t)
         if sym is not None:
             if sym.node is None:

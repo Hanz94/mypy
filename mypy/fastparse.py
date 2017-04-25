@@ -343,9 +343,6 @@ class ASTConverter(ast3.NodeTransformer):  # type: ignore  # typeshed PR #931
             arg_types = [a.type_annotation for a in args]
             return_type = TypeConverter(self.errors, line=n.lineno).visit(n.returns)
 
-        for arg, arg_type in zip(args, arg_types):
-            self.set_type_optional(arg_type, arg.initializer)
-
         func_type = None
         if any(arg_types) or return_type:
             if len(arg_types) != 1 and any(isinstance(t, EllipsisType) for t in arg_types):
@@ -386,14 +383,6 @@ class ASTConverter(ast3.NodeTransformer):  # type: ignore  # typeshed PR #931
             return Decorator(func_def, self.translate_expr_list(n.decorator_list), var)
         else:
             return func_def
-
-    def set_type_optional(self, type: Type, initializer: Expression) -> None:
-        if not experiments.STRICT_OPTIONAL:
-            return
-        # Indicate that type should be wrapped in an Optional if arg is initialized to None.
-        optional = isinstance(initializer, NameExpr) and initializer.name == 'None'
-        if isinstance(type, UnboundType):
-            type.optional = optional
 
     def transform_args(self,
                        args: ast3.arguments,
